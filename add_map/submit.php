@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' &&
             // Execute the script
             $filename = pathinfo($uploadFile)['filename'];
 
-            $command = escapeshellcmd("{$scriptDir}add_map.sh $mapname '$filename' $category $mapper $points $stars '$timestamp'");
+            $command = escapeshellcmd("{$scriptDir}add_map.py $mapname '$filename' $category $mapper $points $stars '$timestamp'");
             $output = shell_exec($command);
 
             echo $style . "<h2>$output</h2><div class='debug'>Command: $command</div>";
