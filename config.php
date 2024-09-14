@@ -10,6 +10,6 @@ return [
         'user1' => ['anime'],
         'user2' => ['other'],
     ],
-    'uploadDir' => '/home/souly/servers/maps/',
-    'scriptDir' => '/home/souly/servers/'
+    'uploadDir' => 'path/to/maps',
+    'scriptDir' => 'path/to/add_map.py'
 ];
