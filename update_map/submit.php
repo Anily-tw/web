@@ -3,6 +3,7 @@
 $config = include '../config.php';
 
 $credentials = $config['credentials'];
+$permissions = $config['permissions'];
 $uploadDir = $config['uploadDir'];
 
 if (!isset($_SERVER['PHP_AUTH_USER'])) {
@@ -41,11 +42,17 @@ $style = "
 // Check if file and inputs are provided
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['map'])) {
     $file = $_FILES['map']['tmp_name'];
+    $category = $_POST['category'];
 
+    $allowed_categories = $permissions[$_SERVER['PHP_AUTH_USER']];
+
+    if (!in_array($category, $allowed_categories)) {
+        echo $style . "<h2>You don't have permission to update in this category.</h2><div class='debug'>Allowed categories: "; foreach($allowed_categories as $cat) { echo $cat . " "; }; echo "</div>";
+    }
     // Validate file
-    if (is_uploaded_file($file)) {
+    else if (is_uploaded_file($file)) {
         // Move the uploaded file to a directory accessible by the script
-        $uploadFile = $uploadDir . basename($_FILES['map']['name']);
+        $uploadFile = $uploadDir . $category . '/' . basename($_FILES['map']['name']);
         if (move_uploaded_file($file, $uploadFile)) {
             $filename = pathinfo($uploadFile)['filename'];
             echo $style . "<h2>Map $filename was updated</h2>";

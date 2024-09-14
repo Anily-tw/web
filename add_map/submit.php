@@ -3,6 +3,7 @@
 $config = include '../config.php';
 
 $credentials = $config['credentials'];
+$permissions = $config['permissions'];
 $uploadDir = $config['uploadDir'];
 $scriptDir = $config['scriptDir'];
 
@@ -52,10 +53,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' &&
     $stars = (int)$_POST['stars'];
     $timestamp = date('Y-m-d H:i:s', strtotime($_POST['timestamp']));
 
+    $allowed_categories = $permissions[$_SERVER['PHP_AUTH_USER']];
+
+    if (!in_array($_POST['category'], $allowed_categories)) {
+        echo $style . "<h2>You don't have permission to upload to this category.</h2><div class='debug'>Allowed categories: "; foreach($allowed_categories as $cat) { echo $cat; }; echo "</div>";
+    }
     // Validate file
-    if (is_uploaded_file($file)) {
+    else if (is_uploaded_file($file)) {
         // Move the uploaded file to a directory accessible by the script
-        $uploadFile = $uploadDir . basename($_FILES['map']['name']);
+        $uploadFile = $uploadDir . $category . '/' . basename($_FILES['map']['name']);
         if (move_uploaded_file($file, $uploadFile)) {
             // Execute the script
             $filename = pathinfo($uploadFile)['filename'];
