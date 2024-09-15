@@ -46,16 +46,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' &&
     isset($_POST['mapper']) && isset($_POST['points']) && isset($_POST['stars']) && isset($_POST['timestamp'])) {
 
     $file = $_FILES['map']['tmp_name'];
-    $category = escapeshellarg($_POST['category']);
-    $mapname = escapeshellarg($_POST['mapname']);
-    $mapper = escapeshellarg($_POST['mapper']);
+    $category = $_POST['category'];
+    $mapname = $_POST['mapname'];
+    $mapper = $_POST['mapper'];
     $points = (int)$_POST['points'];
     $stars = (int)$_POST['stars'];
     $timestamp = date('Y-m-d H:i:s', strtotime($_POST['timestamp']));
 
     $allowed_categories = $permissions[$_SERVER['PHP_AUTH_USER']];
 
-    if (!in_array($_POST['category'], $allowed_categories)) {
+    if (!in_array($category, $allowed_categories)) {
         echo $style . "<h2>You don't have permission to upload to this category.</h2><div class='debug'>Allowed categories: "; foreach($allowed_categories as $cat) { echo $cat; }; echo "</div>";
     }
     // Validate file
@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' &&
             // Execute the script
             $filename = pathinfo($uploadFile)['filename'];
 
-            $command = escapeshellcmd("{$scriptDir}add_map.py $mapname '$filename' $category $mapper $points $stars '$timestamp'");
+            $command = escapeshellcmd("{$scriptDir}add_map.py '$mapname' '$filename' '$category' '$mapper' $points $stars '$timestamp'");
             $output = shell_exec($command);
 
             echo $style . "<h2>$output</h2><div class='debug'>Command: $command</div>";
